@@ -7,9 +7,10 @@ class Chess
 {
 private:
     Piece *arr[64];
+    Color turn;
 
 public:
-    Chess()
+    Chess() : turn(Color::WHITE)
     {
         // Initialize all squares to nullptr
         for (int i = 0; i < 64; i++)
@@ -33,7 +34,7 @@ public:
         arr[37] = new Queen(Color::WHITE, 32);
         
         // Add a single rook
-        arr[0] = new Rook(Color::WHITE, 0);
+        arr[63] = new Rook(Color::BLACK, 63);
     }
 
     std::string getBoard() const
@@ -60,28 +61,29 @@ public:
         return board;
     }
 
-    bool
-    isEmpty(int position) const
-    {
-        return arr[position] == nullptr;
+    bool isEmpty(int position) const {
+        return arr[position] == nullptr || arr[position]->getColor() != turn;
     }
-    bool move(int oldPosition, int newPosition)
-    {
-        if (isEmpty(oldPosition))
-        {
+
+    bool move(int oldPosition, int newPosition) {
+        if (arr[oldPosition] == nullptr || arr[oldPosition]->getColor() != turn) {
             return false;
         }
 
-        if (arr[oldPosition]->move(newPosition))
-        {
-            arr[oldPosition]->setPosition(newPosition);
-            arr[newPosition] = arr[oldPosition];
-            arr[oldPosition] = nullptr;
-            return true;
-        }
-        else
-        {
+        if (!arr[oldPosition]->move(newPosition)) {
             return false;
         }
+
+        if (!isEmpty(newPosition)) {
+            delete arr[newPosition];  // Capture the opposing piece
+        }
+
+        arr[newPosition] = arr[oldPosition];
+        arr[oldPosition] = nullptr;
+
+        // Switch turn
+        turn = (turn == Color::WHITE) ? Color::BLACK : Color::WHITE;
+
+        return true;
     }
 };
