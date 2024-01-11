@@ -1,6 +1,7 @@
 #include <iostream>
 #include "pieces/pawn.h"
 #include "pieces/queen.h"
+#include "pieces/rook.h"
 
 class Chess
 {
@@ -30,6 +31,9 @@ public:
 
         // Add a single queen
         arr[37] = new Queen(Color::WHITE, 32);
+        
+        // Add a single rook
+        arr[0] = new Rook(Color::WHITE, 0);
     }
 
     std::string getBoard() const
