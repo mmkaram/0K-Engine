@@ -1,3 +1,4 @@
+#pragma once
 #include <array>
 
 enum class Color
@@ -32,5 +33,5 @@ public:
 
     void setPosition(int position) { this->position = position; }
 
-    virtual int move(int newPosition) { return 0; };
+    virtual bool move(int newPosition) { return false; };
 };

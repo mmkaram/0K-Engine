@@ -1,4 +1,4 @@
-#include "piece.cpp"
+#include "piece.h"
 
 // Pawn.h
 class Pawn : public Piece
@@ -12,13 +12,12 @@ public:
         else { direction = -1; }
     }
 
-    int move(int newPosistion) override
+    bool move(int newPosistion) override
     {
-        if (newPosistion == position + direction)
+        if (newPosistion == position + (direction * 8))
         {
-            position = newPosistion;
-            return 0;
+            return true;
         }
-        else { return 1; }
+        else { return false; }
     }
 };
