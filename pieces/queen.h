@@ -10,6 +10,10 @@ public:
 
     bool move(int newPosition) override
     {
+        if (!inBoard(newPosition))
+        {
+            return false;
+        }
         int oldX = position % 8;
         int oldY = position / 8;
         int newX = newPosition % 8;

@@ -1,7 +1,9 @@
 #include <iostream>
+#include <string> 
 #include "pieces/pawn.h"
 #include "pieces/queen.h"
 #include "pieces/rook.h"
+#include "pieces/knight.h"
 
 class Chess
 {
@@ -32,9 +34,49 @@ public:
 
         // Add a single queen
         arr[37] = new Queen(Color::WHITE, 32);
-        
+
         // Add a single rook
         arr[63] = new Rook(Color::BLACK, 63);
+
+        // Add a single knight
+        arr[17] = new Knight(Color::BLACK, 17);
+    }
+
+    std::string numberBoard()
+    {
+        std::string board;
+
+        for (int i = 0; i < 64; i++)
+        {
+            if (i % 8 == 0 && i != 0)
+            {
+                board += "\n";
+            }
+
+            board += std::to_string(i);
+            board += " ";
+        }
+
+        board += "\n";
+        return board;
+    }
+
+    std::string colorToString(Color color)
+    {
+        switch (color)
+        {
+        case Color::WHITE:
+            return "White";
+        case Color::BLACK:
+            return "Black";
+        default:
+            return "Unknown";
+        }
+    }
+
+    Color getTurn() const
+    {
+        return turn;
     }
 
     std::string getBoard() const
@@ -61,21 +103,26 @@ public:
         return board;
     }
 
-    bool isEmpty(int position) const {
+    bool isEmpty(int position) const
+    {
         return arr[position] == nullptr || arr[position]->getColor() != turn;
     }
 
-    bool move(int oldPosition, int newPosition) {
-        if (arr[oldPosition] == nullptr || arr[oldPosition]->getColor() != turn) {
-            return false;
+    int move(int oldPosition, int newPosition)
+    {
+        if (arr[oldPosition] == nullptr || arr[oldPosition]->getColor() != turn)
+        {
+            return 1;
         }
 
-        if (!arr[oldPosition]->move(newPosition)) {
-            return false;
+        if (arr[oldPosition]->move(newPosition))
+        {
+            return 2;
         }
 
-        if (!isEmpty(newPosition)) {
-            delete arr[newPosition];  // Capture the opposing piece
+        if (!isEmpty(newPosition))
+        {
+            delete arr[newPosition]; // Capture the opposing piece
         }
 
         arr[newPosition] = arr[oldPosition];
@@ -84,6 +131,6 @@ public:
         // Switch turn
         turn = (turn == Color::WHITE) ? Color::BLACK : Color::WHITE;
 
-        return true;
+        return 3;
     }
 };

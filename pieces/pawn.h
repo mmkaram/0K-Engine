@@ -7,17 +7,31 @@ private:
     int direction;
 
 public:
-    Pawn(Color color, int position) : Piece(color, position) { 
-        if (color == Color::WHITE) { direction = 1; }
-        else { direction = -1; }
+    Pawn(Color color, int position) : Piece(color, position)
+    {
+        if (color == Color::WHITE)
+        {
+            direction = 1;
+        }
+        else
+        {
+            direction = -1;
+        }
     }
 
-    bool move(int newPosistion) override
+    bool move(int newPosition) override
     {
-        if (newPosistion == position + (direction * 8))
+        if (!inBoard(newPosition))
+        {
+            return false;
+        }
+        if (newPosition == position + (direction * 8))
         {
             return true;
         }
-        else { return false; }
+        else
+        {
+            return false;
+        }
     }
 };
