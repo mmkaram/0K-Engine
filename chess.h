@@ -4,6 +4,7 @@
 #include "pieces/queen.h"
 #include "pieces/rook.h"
 #include "pieces/knight.h"
+#include "pieces/bishop.h"
 
 class Chess
 {
@@ -40,6 +41,9 @@ public:
 
         // Add a single knight
         arr[17] = new Knight(Color::BLACK, 17);
+        
+        // Add a single bishop
+        arr[32] = new Bishop(Color::WHITE, 32);
     }
 
     std::string numberBoard()
