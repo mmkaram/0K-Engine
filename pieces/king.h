@@ -5,7 +5,7 @@ class King : public Piece
 public:
     King(Color color, int position) : Piece(color, position) {}
 
-    char getType() const { return 'K'; }
+    char getRenderChar() const override { return 'K'; }
 
     bool move(int newPosition) override
     {

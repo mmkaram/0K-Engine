@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string> 
+#include <string>
 #include "pieces/pawn.h"
 #include "pieces/queen.h"
 #include "pieces/rook.h"
@@ -42,7 +42,7 @@ public:
 
         // Add a single knight
         arr[17] = new Knight(Color::WHITE, 17);
-        
+
         // Add a single bishop
         arr[32] = new Bishop(Color::BLACK, 32);
 
@@ -103,7 +103,8 @@ public:
             }
             else
             {
-                board += (arr[i]->getColor() == Color::WHITE ? "W " : "B ") + arr[i]->getType();
+                board += (arr[i]->getColor() == Color::WHITE ? "W" : "B");
+                board += arr[i]->getRenderChar();
                 board += " ";
             }
         }

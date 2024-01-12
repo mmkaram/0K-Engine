@@ -9,7 +9,7 @@ private:
 public:
     Bishop(Color color, int position) : Piece(color, position) {}
 
-    char getType() const { return 'B'; }
+    char getRenderChar() const override { return 'B'; }
 
     bool move(int newPosition) override
     {

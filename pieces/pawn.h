@@ -7,7 +7,7 @@ private:
     int direction;
 
 public:
-    char getType() const { return 'P'; }
+    char getRenderChar() const override { return 'P'; }
 
     Pawn(Color color, int position) : Piece(color, position)
     {

@@ -8,7 +8,7 @@ public:
         //
     }
 
-    char getType() const { return 'R'; }
+    char getRenderChar() const override { return 'R'; }
 
     bool move(int newPosition) override
     {

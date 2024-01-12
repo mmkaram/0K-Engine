@@ -20,7 +20,8 @@ public:
         this->position = position;
     }
 
-    virtual char getType() const { return '?'; }
+    virtual char getRenderChar() const { return '?'; }
+
     Color getColor() const { return color; }
 
     int getPosition() const { return position; }
