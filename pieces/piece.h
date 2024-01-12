@@ -24,6 +24,12 @@ public:
 
     Color getColor() const { return color; }
 
+    virtual std::array<int, 9> getPath(int newPosition)
+    {
+        std::array<int, 9> a = {-1};
+        return a;
+    }
+
     int getPosition() const { return position; }
 
     std::array<int, 2> getPositionXY() const

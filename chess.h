@@ -35,7 +35,7 @@ public:
         }
 
         // Add a single queen
-        arr[37] = new Queen(Color::WHITE, 32);
+        arr[37] = new Queen(Color::WHITE, 37);
 
         // Add a single rook
         arr[63] = new Rook(Color::BLACK, 63);
@@ -99,7 +99,7 @@ public:
 
             if (arr[i] == nullptr)
             {
-                board += "- ";
+                board += "-- ";
             }
             else
             {
@@ -112,25 +112,56 @@ public:
         board += "\n";
         return board;
     }
+    bool isSameColor(int position, Color color) const
+    {
+        return arr[position] != nullptr && arr[position]->getColor() == color;
+    }
 
     bool isEmpty(int position) const
     {
-        return arr[position] == nullptr || arr[position]->getColor() != turn;
+        return arr[position] == nullptr;
     }
 
     int move(int oldPosition, int newPosition)
     {
-        if (arr[oldPosition] == nullptr || arr[oldPosition]->getColor() != turn)
+        if (arr[oldPosition] == nullptr)
         {
+            std::cout << "this is a null pointer\n";
             return 1;
+        }
+        if ((arr[oldPosition]->getColor() != turn))
+        {
+            std::cout << "this is not your piece\n";
+            return 2;
+        }
+
+        std::array<int, 9> PATH = arr[oldPosition]->getPath(newPosition);
+
+        for (int i = 0; i < 9; i++)
+        {
+            if (PATH[i + 1] == -1)
+            {
+                if (isSameColor(newPosition, arr[oldPosition]->getColor()))
+                {
+                    std::cout << "You cannot capture your own piece\n";
+                    return 5;
+                }
+                break;
+            }
+            else if (!isEmpty(PATH[i]))
+            {
+                std::cout << "There is a piece in the way\n";
+                return 3;
+            }
         }
 
         if (!arr[oldPosition]->move(newPosition))
         {
-            return 2;
+            std::cout << "Invalid move\n";
+            return 4;
         }
 
-        if (!isEmpty(newPosition))
+        if (!isEmpty(newPosition) && !isSameColor(newPosition, arr[oldPosition]->getColor()))
         {
             delete arr[newPosition]; // Capture the opposing piece
         }
@@ -143,6 +174,6 @@ public:
         std::cout << this->getBoard() << "\n";
         std::cout << "It is now " << colorToString(turn) << "'s turn.\n";
 
-        return 3;
+        return 0;
     }
 };

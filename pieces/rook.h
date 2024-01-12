@@ -10,6 +10,56 @@ public:
 
     char getRenderChar() const override { return 'R'; }
 
+    std::array<int, 9> getPath(int newPosition) override
+    {
+
+        std::array<int, 9> path = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
+        int pos = this->position;
+        int i = 0;
+        // Check if it's moving along a file
+        if (abs(newPosition - this->position) % 8 == 0)
+        {
+            std::cout << "suck my dick you dumbass \n";
+
+            if (this->position > newPosition) // if going upwards (backwards in the array)
+            {
+
+                while (pos != newPosition) // subtract 8 from pos until we get to newPosition
+                {
+                    pos -= 8;
+                    path[i] = pos;
+                    i++;
+                }
+            } else {
+                while (pos != newPosition) // add 8 from pos until we get to newPosition
+                {
+                    pos += 8;
+                    path[i] = pos;
+                    i++;
+                }
+            }
+        } else { // if it's moving along a rank
+            if (this->position > newPosition) // if going left (backwards in the array)
+            {
+                while (pos != newPosition) // subtract 1 from pos until we get to newPosition
+                {
+                    pos -= 1;
+                    path[i] = pos;
+                    i++;
+                }
+            } else {
+                while (pos != newPosition) // add 1 from pos until we get to newPosition
+                {
+                    pos += 1;
+                    path[i] = pos;
+                    i++;
+                }
+            }   
+        }
+
+        return path;
+    }
+
     bool move(int newPosition) override
     {
 
