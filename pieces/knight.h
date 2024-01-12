@@ -6,7 +6,9 @@ class Knight : public Piece
 {
 public:
     Knight(Color color, int position) : Piece(color, position) {}
-
+    
+    char getType() const { return 'N'; }
+    
     bool move(int newPosition) override
     {
         if (!inBoard(newPosition))

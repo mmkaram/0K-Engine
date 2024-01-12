@@ -7,6 +7,9 @@ public:
     {
         //
     }
+
+    char getType() const { return 'R'; }
+
     bool move(int newPosition) override
     {
 

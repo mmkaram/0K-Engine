@@ -103,7 +103,8 @@ public:
             }
             else
             {
-                board += (arr[i]->getColor() == Color::WHITE ? "W " : "B ");
+                board += (arr[i]->getColor() == Color::WHITE ? "W " : "B ") + arr[i]->getType();
+                board += " ";
             }
         }
 

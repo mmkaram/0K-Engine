@@ -5,6 +5,8 @@ class Queen : public Piece
 public:
     Queen(Color color, int position) : Piece(color, position) {}
 
+    char getType() const { return 'Q'; }
+
     bool move(int newPosition) override
     {
         if (!inBoard(newPosition))

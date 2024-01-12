@@ -7,6 +7,8 @@ private:
     int direction;
 
 public:
+    char getType() const { return 'P'; }
+
     Pawn(Color color, int position) : Piece(color, position)
     {
         if (color == Color::WHITE)
