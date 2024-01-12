@@ -19,8 +19,6 @@ public:
         // Check if it's moving along a file
         if (abs(newPosition - this->position) % 8 == 0)
         {
-            std::cout << "suck my dick you dumbass \n";
-
             if (this->position > newPosition) // if going upwards (backwards in the array)
             {
 

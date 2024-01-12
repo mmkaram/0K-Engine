@@ -7,6 +7,19 @@ public:
 
     char getRenderChar() const override { return 'K'; }
 
+    std::array<int, 9> getPath(int newPosition) override
+    {
+        std::array<int, 9> path = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
+
+        // Check if the move is valid for a king
+        if (abs(newPosition - this->position) == 1 || abs(newPosition - this->position) == 7 || abs(newPosition - this->position) == 8 || abs(newPosition - this->position) == 9)
+        {
+            path[0] = newPosition;
+        }
+
+        return path;
+    }
+
     bool move(int newPosition) override
     {
         if (!inBoard(newPosition))

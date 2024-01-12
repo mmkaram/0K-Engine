@@ -46,10 +46,12 @@ public:
         // Add a single bishop
         arr[32] = new Bishop(Color::BLACK, 32);
 
-        // Add black king
+        // Add kings
         arr[60] = new King(Color::BLACK, 60);
+        arr[4] = new King(Color::WHITE, 4);
     }
 
+    // helper funcs
     std::string numberBoard()
     {
         std::string board;
@@ -112,6 +114,7 @@ public:
         board += "\n";
         return board;
     }
+
     bool isSameColor(int position, Color color) const
     {
         return arr[position] != nullptr && arr[position]->getColor() == color;
@@ -120,6 +123,42 @@ public:
     bool isEmpty(int position) const
     {
         return arr[position] == nullptr;
+    }
+
+    bool isInCheck(Color kingColor)
+    {
+        // Find the position of the king
+        int kingPos = -1;
+        for (int i = 0; i < 64; i++)
+        {
+            if (arr[i] != nullptr && arr[i]->getColor() == kingColor && dynamic_cast<King *>(arr[i]) != nullptr)
+            {
+                kingPos = i;
+                break;
+            }
+        }
+
+        // If the king is not on the board, it's not in check
+        if (kingPos == -1)
+        {
+            return false;
+        }
+
+        // Check if any piece can move to the king's position
+        for (int i = 0; i < 64; i++)
+        {
+            if (arr[i] != nullptr && arr[i]->getColor() != kingColor)
+            {
+                std::array<int, 9> path = arr[i]->getPath(kingPos);
+                if (std::find(path.begin(), path.end(), kingPos) != path.end())
+                {
+                    return true;
+                }
+            }
+        }
+
+        // If no piece can move to the king's position, the king is not in check
+        return false;
     }
 
     int move(int oldPosition, int newPosition)
@@ -160,12 +199,18 @@ public:
             std::cout << "Invalid move\n";
             return 4;
         }
+        
+        if (isInCheck(turn))
+        {
+            std::cout << "You cannot move into check\n";
+            return 6;
+        }
 
         if (!isEmpty(newPosition) && !isSameColor(newPosition, arr[oldPosition]->getColor()))
         {
             delete arr[newPosition]; // Capture the opposing piece
         }
-
+        arr[oldPosition]->setPosition(newPosition); // Update the piece's position
         arr[newPosition] = arr[oldPosition];
         arr[oldPosition] = nullptr;
 
