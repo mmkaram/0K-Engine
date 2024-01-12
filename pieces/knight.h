@@ -4,9 +4,6 @@
 
 class Knight : public Piece
 {
-private:
-    int direction;
-
 public:
     Knight(Color color, int position) : Piece(color, position) {}
 

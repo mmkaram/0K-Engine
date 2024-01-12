@@ -2,9 +2,6 @@
 
 class Queen : public Piece
 {
-private:
-    int direction;
-
 public:
     Queen(Color color, int position) : Piece(color, position) {}
 

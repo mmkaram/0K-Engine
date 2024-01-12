@@ -5,6 +5,7 @@
 #include "pieces/rook.h"
 #include "pieces/knight.h"
 #include "pieces/bishop.h"
+#include "pieces/king.h"
 
 class Chess
 {
@@ -40,10 +41,13 @@ public:
         arr[63] = new Rook(Color::BLACK, 63);
 
         // Add a single knight
-        arr[17] = new Knight(Color::BLACK, 17);
+        arr[17] = new Knight(Color::WHITE, 17);
         
         // Add a single bishop
-        arr[32] = new Bishop(Color::WHITE, 32);
+        arr[32] = new Bishop(Color::BLACK, 32);
+
+        // Add black king
+        arr[60] = new King(Color::BLACK, 60);
     }
 
     std::string numberBoard()
@@ -119,7 +123,7 @@ public:
             return 1;
         }
 
-        if (arr[oldPosition]->move(newPosition))
+        if (!arr[oldPosition]->move(newPosition))
         {
             return 2;
         }
@@ -134,6 +138,8 @@ public:
 
         // Switch turn
         turn = (turn == Color::WHITE) ? Color::BLACK : Color::WHITE;
+        std::cout << this->getBoard() << "\n";
+        std::cout << "It is now " << colorToString(turn) << "'s turn.\n";
 
         return 3;
     }

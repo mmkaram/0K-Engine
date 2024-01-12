@@ -1,4 +1,5 @@
 #include "piece.h"
+#include <iostream>
 
 class Bishop : public Piece
 {
@@ -12,6 +13,7 @@ public:
     {
         if (!inBoard(newPosition))
         {
+            std::cout << "kill yourself\n";
             return false;
         }
 
@@ -20,17 +22,11 @@ public:
         // Check if the move is along a diagonal
         if (difference % 7 == 0 || difference % 9 == 0)
         {
-            // Check if the old and new positions are on the same diagonal
-            int oldDiagonal = (position / 8) + (position % 8);
-            int newDiagonal = (newPosition / 8) + (newPosition % 8);
-
-            if (oldDiagonal == newDiagonal || oldDiagonal == -newDiagonal)
-            {
-                position = newPosition;
-                return true;
-            }
+            std::cout << "va niquer ta mere\n";
+            position = newPosition;
+            return true;
         }
-
+        std::cout << "hang yourself\n";
         return false;
     }
 };

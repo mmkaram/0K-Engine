@@ -33,7 +33,7 @@ public:
 
     void setPosition(int position) { this->position = position; }
 
-    bool inBoard(int position) const { return position > 0 && position < 64; }
+    bool inBoard(int position) const { return position >= 0 && position < 64; }
 
     virtual bool move(int newPosition) { return false; };
 };

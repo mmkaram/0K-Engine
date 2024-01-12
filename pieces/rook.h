@@ -2,9 +2,6 @@
 
 class Rook : public Piece
 {
-private:
-    int direction;
-
 public:
     Rook(Color color, int position) : Piece(color, position)
     {
