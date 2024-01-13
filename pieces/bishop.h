@@ -53,7 +53,6 @@ public:
             position = newPosition;
             return true;
         }
-        std::cout << "hang yourself\n";
         return false;
     }
 };

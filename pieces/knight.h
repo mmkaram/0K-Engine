@@ -8,7 +8,7 @@ public:
     
     char getRenderChar() const override { return 'N'; }
     
-    std::array<int, 9> getPath(int newPosition) override {
+    std::array<int, 9> getPath(int newPosition) override { 
         std::array<int, 9> a = {newPosition, -1, -1, -1, -1, -1, -1, -1, -1};
         return a;
     } 

@@ -22,23 +22,23 @@ public:
             arr[i] = nullptr;
         }
 
-        // // Place white pawns at indices 8-15
-        // for (int i = 8; i < 16; i++)
-        // {
-        //     arr[i] = new Pawn(Color::WHITE, i);
-        // }
+        // Place white pawns at indices 8-15
+        for (int i = 8; i < 16; i++)
+        {
+            arr[i] = new Pawn(Color::WHITE, i);
+        }
 
-        // // Place black pawns at indices 48-55
-        // for (int i = 48; i < 56; i++)
-        // {
-        //     arr[i] = new Pawn(Color::BLACK, i);
-        // }
+        // Place black pawns at indices 48-55
+        for (int i = 48; i < 56; i++)
+        {
+            arr[i] = new Pawn(Color::BLACK, i);
+        }
 
         // Add a single queen
         arr[37] = new Queen(Color::WHITE, 37);
 
         // Add a single rook
-        arr[63] = new Rook(Color::BLACK, 63);
+        arr[60] = new Rook(Color::BLACK, 60);
 
         // Add a single knight
         arr[17] = new Knight(Color::WHITE, 17);
@@ -47,7 +47,7 @@ public:
         arr[32] = new Bishop(Color::BLACK, 32);
 
         // Add kings
-        arr[60] = new King(Color::BLACK, 60);
+        arr[59] = new King(Color::BLACK, 59);
         arr[4] = new King(Color::WHITE, 4);
     }
 
@@ -141,49 +141,63 @@ public:
         // If the king is not on the board, it's not in check
         if (kingPos == -1)
         {
+            std::cout << "king not found";
             return false;
         }
-
+        printf("kingPos: ");
+        std::cout << kingPos;
+        printf("\n");
         // Check if any piece can move to the king's position
         for (int i = 0; i < 64; i++)
         {
-            if (arr[i] != nullptr && arr[i]->getColor() != kingColor)
+            // check if the square is not empty, it's not it's own piece, and it has a valid move to the king
+            if (arr[i] != nullptr && arr[i]->getColor() != kingColor && arr[i]->move(kingPos))
             {
+
+                // DEBUG
+                std::cout << "i is: " << i << "\n";
                 std::array<int, 9> path = arr[i]->getPath(kingPos);
                 std::cout << "path is: ";
+
                 for (int j = 0; j < 9; j++)
                 {
                     std::cout << path[j];
                     std::cout << " ";
                 }
+
+                // DEBUG
+
                 for (int j = 0; j < 9; j++)
                 {
-                    // I don't think I need this check as we know the path is to the opposing king
-                    if (path[j + 1] == -1)
+                    if (path[j] == kingPos)
                     {
+                        std::cout << "path[j] is kingPos\n";
                         return true;
-                    } else if (!isEmpty(path[j]))
-                    {
-                        // std::cout << "Check checking: There is a piece in the way, this is not a check\n";
-                        // std::cout << "path[j] is: ";
-                        // std::cout << path[j];
-                        // std::cout << "\n";
                     }
+                    if (!isEmpty(path[j]) || path[j] == -1)
+                    {
+                        std::cout << "something in the way or no more path\n";
+                        continue;
+                    }
+                    else
+                    {
+                        std::cout << "path[j] is empty\n";
+                        continue;
+                    }
+                    std::cout << "Done with current piece: ";
+                    std::cout << arr[i];
+                    std::cout << "\n";
                 }
-                // if (std::find(path.begin(), path.end(), kingPos) != path.end())
-                // {
-                //     return true;
-                // }
             }
         }
-
+        std::cout << "king is not in check\n";
         // If no piece can move to the king's position, the king is not in check
         return false;
     }
 
     int move(int oldPosition, int newPosition)
     {
-        // Checks if the piece in the square that's trying to move exists 
+        // Checks if the piece in the square that's trying to move exists
         if (arr[oldPosition] == nullptr)
         {
             std::cout << "this is a null pointer\n";
@@ -201,6 +215,7 @@ public:
         // for i in the path to the end goal position
         for (int i = 0; i < 9; i++)
         {
+            std::cout << "Steps will be taken to get to intended result"<< PATH[i];
             // if the next value in the path is the last
             // check if the piece in the last position is the same color
             if (PATH[i + 1] == -1)
@@ -215,7 +230,9 @@ public:
             // if there's a piece in the way, this move is invalid
             else if (!isEmpty(PATH[i]))
             {
-                std::cout << "There is a piece in the way\n";
+                std::cout << "There is a piece in the way";
+                std::cout << PATH[i];
+                std::cout << "\n";
                 return 3;
             }
         }
