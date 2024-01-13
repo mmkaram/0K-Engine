@@ -22,17 +22,17 @@ public:
             arr[i] = nullptr;
         }
 
-        // Place white pawns at indices 8-15
-        for (int i = 8; i < 16; i++)
-        {
-            arr[i] = new Pawn(Color::WHITE, i);
-        }
+        // // Place white pawns at indices 8-15
+        // for (int i = 8; i < 16; i++)
+        // {
+        //     arr[i] = new Pawn(Color::WHITE, i);
+        // }
 
-        // Place black pawns at indices 48-55
-        for (int i = 48; i < 56; i++)
-        {
-            arr[i] = new Pawn(Color::BLACK, i);
-        }
+        // // Place black pawns at indices 48-55
+        // for (int i = 48; i < 56; i++)
+        // {
+        //     arr[i] = new Pawn(Color::BLACK, i);
+        // }
 
         // Add a single queen
         arr[37] = new Queen(Color::WHITE, 37);
@@ -150,10 +150,30 @@ public:
             if (arr[i] != nullptr && arr[i]->getColor() != kingColor)
             {
                 std::array<int, 9> path = arr[i]->getPath(kingPos);
-                if (std::find(path.begin(), path.end(), kingPos) != path.end())
+                std::cout << "path is: ";
+                for (int j = 0; j < 9; j++)
                 {
-                    return true;
+                    std::cout << path[j];
+                    std::cout << " ";
                 }
+                for (int j = 0; j < 9; j++)
+                {
+                    // I don't think I need this check as we know the path is to the opposing king
+                    if (path[j + 1] == -1)
+                    {
+                        return true;
+                    } else if (!isEmpty(path[j]))
+                    {
+                        // std::cout << "Check checking: There is a piece in the way, this is not a check\n";
+                        // std::cout << "path[j] is: ";
+                        // std::cout << path[j];
+                        // std::cout << "\n";
+                    }
+                }
+                // if (std::find(path.begin(), path.end(), kingPos) != path.end())
+                // {
+                //     return true;
+                // }
             }
         }
 
@@ -163,21 +183,26 @@ public:
 
     int move(int oldPosition, int newPosition)
     {
+        // Checks if the piece in the square that's trying to move exists 
         if (arr[oldPosition] == nullptr)
         {
             std::cout << "this is a null pointer\n";
             return 1;
         }
+        // Checks if that piece can be moved
         if ((arr[oldPosition]->getColor() != turn))
         {
             std::cout << "this is not your piece\n";
             return 2;
         }
 
+        // Checks if there's a piece in the way
         std::array<int, 9> PATH = arr[oldPosition]->getPath(newPosition);
-
+        // for i in the path to the end goal position
         for (int i = 0; i < 9; i++)
         {
+            // if the next value in the path is the last
+            // check if the piece in the last position is the same color
             if (PATH[i + 1] == -1)
             {
                 if (isSameColor(newPosition, arr[oldPosition]->getColor()))
@@ -187,6 +212,7 @@ public:
                 }
                 break;
             }
+            // if there's a piece in the way, this move is invalid
             else if (!isEmpty(PATH[i]))
             {
                 std::cout << "There is a piece in the way\n";
@@ -199,20 +225,28 @@ public:
             std::cout << "Invalid move\n";
             return 4;
         }
-        
-        if (isInCheck(turn))
-        {
-            std::cout << "You cannot move into check\n";
-            return 6;
-        }
 
+        Piece *capturedPiece = arr[newPosition];
         if (!isEmpty(newPosition) && !isSameColor(newPosition, arr[oldPosition]->getColor()))
         {
+            std::cout << "You captured a piece\n";
             delete arr[newPosition]; // Capture the opposing piece
         }
         arr[oldPosition]->setPosition(newPosition); // Update the piece's position
         arr[newPosition] = arr[oldPosition];
         arr[oldPosition] = nullptr;
+
+        if (isInCheck(turn))
+        {
+            std::cout << "You cannot move into check\n";
+            // Undo the move
+            arr[newPosition]->setPosition(oldPosition);
+            arr[oldPosition] = arr[newPosition];
+            arr[newPosition] = nullptr;
+            arr[newPosition] = capturedPiece;
+            delete capturedPiece;
+            return 6;
+        }
 
         // Switch turn
         turn = (turn == Color::WHITE) ? Color::BLACK : Color::WHITE;
