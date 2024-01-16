@@ -45,6 +45,11 @@
         "xutility": "cpp",
         "algorithm": "cpp",
         "string": "cpp",
-        "vector": "cpp"
-    }
+        "vector": "cpp",
+        "chess.h": "c",
+        "map": "cpp",
+        "xtree": "cpp",
+        "list": "cpp"
+    },
+    "discord.enabled": true
 }
