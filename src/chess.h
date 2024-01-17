@@ -61,6 +61,10 @@ public:
             if (board.getSquare(i).getType() == PieceType::PAWN)
             {
                 // Check if the pawn can move forward
+                // TODO: Check if the pawn can move two spaces forward
+                // TODO: Check for en passant
+                // TODO: Check for promotion
+                // TODO: black goes the wrong way
                 if (board.getSquare(i + pawnMap[0]).getType() == PieceType::NONE)
                 {
                     getLegalMoves[i].push_back(i + pawnMap[0]);
@@ -89,35 +93,94 @@ public:
             // Rook checking logic
             if (board.getSquare(i).getType() == PieceType::ROOK || board.getSquare(i).getType() == PieceType::QUEEN)
             {
+                bool up = true;
+                bool down = true;
+                bool left = true;
+                bool right = true;
+
                 for (int j = 0; j < 8; j++)
                 {
 
-                    if (i + upMap[j] >= 0 && i + upMap[j] <= 63)
+                    if (i + upMap[j] >= 0 && i + upMap[j] <= 63 && up)
                     {
-                        if (board.getSquare(i + upMap[j]).getColor() != turn)
+                        // if enemy piece is found, add it to the vector and stop checking in that direction
+                        if (board.getSquare(i + upMap[j]).getColor() != turn && board.getSquare(i + upMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + upMap[j]);
+                            up = false;
+                            // if no enemy piece is found, add it to the vector
+                        }
+                        else if (board.getSquare(i + upMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + upMap[j]);
                         }
+                        // if the piece is the same color, stop checking in that direction
+                        else if (board.getSquare(i + upMap[j]).getColor() == turn)
+                        {
+                            up = false;
+                        }
                     }
-                    if (i + downMap[j] >= 0 && i + downMap[j] <= 63)
+                    //
+
+                    if (i + downMap[j] >= 0 && i + downMap[j] <= 63 && down)
                     {
-                        if (board.getSquare(i + downMap[j]).getColor() != turn)
+                        // if enemy piece is found, add it to the vector and stop checking in that direction
+                        if (board.getSquare(i + downMap[j]).getColor() != turn && board.getSquare(i + downMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + downMap[j]);
+                            down = false;
+                            // if no enemy piece is found, add it to the vector
+                        }
+                        else if (board.getSquare(i + downMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + downMap[j]);
                         }
+                        // if the piece is the same color, stop checking in that direction
+                        else if (board.getSquare(i + downMap[j]).getColor() == turn)
+                        {
+                            down = false;
+                        }
                     }
-                    if (i + leftMap[j] >= 0 && i + leftMap[j] <= 63)
+
+                    //
+                    if (i + leftMap[j] >= 0 && i + leftMap[j] <= 63 && left)
                     {
-                        if (board.getSquare(i + leftMap[j]).getColor() != turn)
+                        // if enemy piece is found, add it to the vector and stop checking in that direction
+                        if (board.getSquare(i + leftMap[j]).getColor() != turn && board.getSquare(i + leftMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + leftMap[j]);
+                            left = false;
+                            // if no enemy piece is found, add it to the vector
+                        }
+                        else if (board.getSquare(i + leftMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + leftMap[j]);
                         }
+                        // if the piece is the same color, stop checking in that direction
+                        else if (board.getSquare(i + leftMap[j]).getColor() == turn)
+                        {
+                            left = false;
+                        }
                     }
-                    if (i + rightMap[j] >= 0 && i + rightMap[j] <= 63)
+
+                    //
+                    if (i + rightMap[j] >= 0 && i + rightMap[j] <= 63 && right)
                     {
-                        if (board.getSquare(i + rightMap[j]).getColor() != turn)
+                        // if enemy piece is found, add it to the vector and stop checking in that direction
+                        if (board.getSquare(i + rightMap[j]).getColor() != turn && board.getSquare(i + rightMap[j]).getType() != PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + rightMap[j]);
+                            right = false;
+                            // if no enemy piece is found, add it to the vector
+                        }
+                        else if (board.getSquare(i + rightMap[j]).getType() == PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + rightMap[j]);
+                        }
+                        // if the piece is the same color, stop checking in that direction
+                        else if (board.getSquare(i + rightMap[j]).getColor() == turn)
+                        {
+                            right = false;
                         }
                     }
                 }
@@ -125,41 +188,118 @@ public:
             // Bishop moves
             if (board.getSquare(i).getType() == PieceType::BISHOP || board.getSquare(i).getType() == PieceType::QUEEN)
             {
+                bool upLeft = true;
+                bool downLeft = true;
+                bool upRight = true;
+                bool downRight = true;
+
                 for (int j = 0; j < 8; j++)
                 {
 
-                    if (i + upLeftMap[j] >= 0 && i + upLeftMap[j] <= 63)
+                    //
+                    if (i + upLeftMap[j] >= 0 && i + upLeftMap[j] <= 63 && upLeft)
                     {
-                        if (board.getSquare(i + upLeftMap[j]).getColor() != turn)
+                        if (board.getSquare(i + upLeftMap[j]).getColor() != turn && board.getSquare(i + upLeftMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + upLeftMap[j]);
+                            upLeft = false;
+                        }
+                        else if (board.getSquare(i + upLeftMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + upLeftMap[j]);
                         }
+                        else if (board.getSquare(i + upLeftMap[j]).getColor() == turn)
+                        {
+                            upLeft = false;
+                        }
                     }
-                    if (i + downLeftMap[j] >= 0 && i + downLeftMap[j] <= 63)
+
+                    //
+                    if (i + downLeftMap[j] >= 0 && i + downLeftMap[j] <= 63 && downLeft)
                     {
-                        if (board.getSquare(i + downLeftMap[j]).getColor() != turn)
+                        if (board.getSquare(i + downLeftMap[j]).getColor() != turn && board.getSquare(i + downLeftMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + downLeftMap[j]);
+                            downLeft = false;
+                        }
+                        else if (board.getSquare(i + downLeftMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + downLeftMap[j]);
                         }
+                        else if (board.getSquare(i + downLeftMap[j]).getColor() == turn)
+                        {
+                            downLeft = false;
+                        }
                     }
-                    if (i + upRightMap[j] >= 0 && i + upRightMap[j] <= 63)
+
+                    //
+                    if (i + upRightMap[j] >= 0 && i + upRightMap[j] <= 63 && upRight)
                     {
-                        if (board.getSquare(i + upRightMap[j]).getColor() != turn)
+                        if (board.getSquare(i + upRightMap[j]).getColor() != turn && board.getSquare(i + upRightMap[j]).getType() != PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + upRightMap[j]);
+                            upRight = false;
+                        }
+                        else if (board.getSquare(i + upRightMap[j]).getType() == PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + upRightMap[j]);
                         }
+                        else if (board.getSquare(i + upRightMap[j]).getColor() == turn)
+                        {
+                            upRight = false;
+                        }
                     }
-                    if (i + downRightMap[j] >= 0 && i + downRightMap[j] <= 63)
+
+                    //
+                    if (i + downRightMap[j] >= 0 && i + downRightMap[j] <= 63 && downRight)
                     {
-                        if (board.getSquare(i + downRightMap[j]).getColor() != turn)
+                        if (board.getSquare(i + downRightMap[j]).getColor() != turn && board.getSquare(i + downRightMap[j]).getType() != PieceType::NONE)
                         {
                             getLegalMoves[i].push_back(i + downRightMap[j]);
+                            downRight = false;
+                        }
+                        else if (board.getSquare(i + downRightMap[j]).getType() == PieceType::NONE)
+                        {
+                            getLegalMoves[i].push_back(i + downRightMap[j]);
+                        }
+                        else if (board.getSquare(i + downRightMap[j]).getColor() == turn)
+                        {
+                            downRight = false;
+                        }
+                    }
+                }
+
+                // King moves
+                if (board.getSquare(i).getType() == PieceType::KING)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (i + kingMap[j] >= 0 && i + kingMap[j] <= 63)
+                        {
+                            if (board.getSquare(i + kingMap[j]).getColor() != turn)
+                            {
+                                getLegalMoves[i].push_back(i + kingMap[j]);
+                            }
                         }
                     }
                 }
             }
         }
+        printMap(getLegalMoves);
         return getLegalMoves;
+    }
+
+    void printMap(const std::map<int, std::vector<int>> &m)
+    {
+        for (const auto &pair : m)
+        {
+            std::cout << "Key: " << pair.first << " Values: ";
+            for (const auto &val : pair.second)
+            {
+                std::cout << val << " ";
+            }
+            std::cout << std::endl;
+        }
     }
 
     bool canMovePiece(int currentPos, int newPos)

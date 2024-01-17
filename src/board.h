@@ -29,6 +29,8 @@ public:
         
         board[16+1] = new Piece(Color::WHITE, PieceType::BISHOP);
         
+        board[32] = new Piece(Color::WHITE, PieceType::QUEEN);
+        
         
     }
     ~Board()

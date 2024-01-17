@@ -7,8 +7,9 @@ int main(int argc, char *argv[])
 
     std::cout << chess.boardString() << "\n";
     
-    std::cout << chess.canMovePiece(17, 17+9) << "\n";
+    std::cout << chess.canMovePiece(32, 32) << "\n";
 
-    
+    // std::cout << chess.boardString() << "\n";
+
     return 0;
 }
