@@ -43,7 +43,7 @@ public:
         return turn;
     }
 
-    std::map<int, std::vector<int>> getLegalMoves()
+    std::map<int, std::vector<int>> getPseudoLegalMoves()
     {
         std::map<int, std::vector<int>> getLegalMoves;
         // get some popcorn and get comfortable, this is gonna be a long one
@@ -63,13 +63,20 @@ public:
             {
                 // multiply by 1 if white, -1 if black
                 int direction = (turn == Color::WHITE) ? 1 : -1;
-                // TODO: Check if the pawn can move two spaces forward
                 // TODO: Check for en passant
                 // TODO: Check for promotion
                 // Check if the pawn can move forward for white
                 if (board.getSquare(i + pawnMap[0] * direction).getType() == PieceType::NONE)
                 {
                     getLegalMoves[i].push_back(i + pawnMap[0] * direction);
+                    if ( (turn == Color::WHITE && i > 7 && i < 16) && (board.getSquare(i + pawnMap[0] * direction * 2).getType() == PieceType::NONE))
+                    {
+                        getLegalMoves[i].push_back(i + (pawnMap[0] * direction * 2));
+                    }
+                    else if ( (turn == Color::BLACK && i < 56 && i > 47) && (board.getSquare(i + pawnMap[0] * direction * 2).getType() == PieceType::NONE))
+                    {
+                        getLegalMoves[i].push_back(i + (pawnMap[0] * direction * 2));
+                    }
                 }
                 // Check if the pawn can move diagonally
                 if (board.getSquare((i + (pawnMap[0] * direction)) + 1).getColor() != turn && board.getSquare((i + (pawnMap[0] * direction)) + 1).getType() != PieceType::NONE)
@@ -291,6 +298,16 @@ public:
         return getLegalMoves;
     }
 
+    std::map<int, std::vector<int>> getLegalMoves()
+    {
+        // this function extends the getPseudoLegalMoves function by removing moves that would put the king in check
+        std::map<int, std::vector<int>> getLegalMoves = getPseudoLegalMoves();
+
+        // TODO: Check for checks
+        
+        return getLegalMoves;
+    }
+
     void printMap(const std::map<int, std::vector<int>> &m)
     {
         for (const auto &pair : m)
@@ -316,7 +333,6 @@ public:
         {
             return false;
         }
-
         return true;
     }
 };
