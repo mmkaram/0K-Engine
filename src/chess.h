@@ -46,6 +46,7 @@ public:
     std::map<int, std::vector<int>> getLegalMoves()
     {
         std::map<int, std::vector<int>> getLegalMoves;
+        // get some popcorn and get comfortable, this is gonna be a long one
         for (int i = 0; i < 64; i++)
         {
             // Check if there is a piece at the current position
@@ -60,23 +61,24 @@ public:
             }
             if (board.getSquare(i).getType() == PieceType::PAWN)
             {
-                // Check if the pawn can move forward
+                // multiply by 1 if white, -1 if black
+                int direction = (turn == Color::WHITE) ? 1 : -1;
                 // TODO: Check if the pawn can move two spaces forward
                 // TODO: Check for en passant
                 // TODO: Check for promotion
-                // TODO: black goes the wrong way
-                if (board.getSquare(i + pawnMap[0]).getType() == PieceType::NONE)
+                // Check if the pawn can move forward for white
+                if (board.getSquare(i + pawnMap[0] * direction).getType() == PieceType::NONE)
                 {
-                    getLegalMoves[i].push_back(i + pawnMap[0]);
+                    getLegalMoves[i].push_back(i + pawnMap[0] * direction);
                 }
                 // Check if the pawn can move diagonally
-                if (board.getSquare(i + pawnMap[0] + 1).getColor() != turn && board.getSquare(i + pawnMap[0] + 1).getType() != PieceType::NONE)
+                if (board.getSquare((i + (pawnMap[0] * direction)) + 1).getColor() != turn && board.getSquare((i + (pawnMap[0] * direction)) + 1).getType() != PieceType::NONE)
                 {
-                    getLegalMoves[i].push_back(i + pawnMap[0] + 1);
+                    getLegalMoves[i].push_back((i + (pawnMap[0] * direction)) + 1);
                 }
-                if (board.getSquare(i + pawnMap[0] - 1).getColor() != turn && board.getSquare(i + pawnMap[0] - 1).getType() != PieceType::NONE)
+                if (board.getSquare((i + (pawnMap[0] * direction)) - 1).getColor() != turn && board.getSquare((i + (pawnMap[0] * direction)) - 1).getType() != PieceType::NONE)
                 {
-                    getLegalMoves[i].push_back(i + pawnMap[0] - 1);
+                    getLegalMoves[i].push_back((i + (pawnMap[0] * direction)) - 1);
                 }
             }
             // Knight checking logic
