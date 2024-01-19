@@ -10,8 +10,6 @@ class Chess {
 private:
   Board board = Board();
   Color turn;
-  int wKingPos = 4;
-  int bKingPos = 4 + (8 * 7);
 
   std::array<int, 8> upMap = {8, 16, 24, 32, 40, 48, 56, 64};
   std::array<int, 8> downMap = {-8, -16, -24, -32, -40, -48, -56, -64};
