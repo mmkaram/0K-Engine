@@ -1,13 +1,12 @@
 #include <iostream>
-#include "chess.h"
 
-int main(int argc, char *argv[])
-{
-    Chess chess;
+#include "chessGame.h"
 
-    std::cout << chess.boardString() << "\n";
+int main () {
 
-    chess.getPseudoLegalMoves(chess.getBoard(), Color::WHITE);
+    Chess game;
 
+    std::cout << game.getBoard() << std::endl;
+    
     return 0;
 }
