@@ -1,33 +1,17 @@
 #include <vector>
 
-enum class Color
-{
-    WHITE,
-    BLACK,
-    NONE
-};
+enum class Color { WHITE, BLACK, NONE };
 
-enum class PieceType
-{
-    KING,
-    QUEEN,
-    ROOK,
-    BISHOP,
-    KNIGHT,
-    PAWN,
-    NONE
-};
+enum class PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, NONE };
 
-
-class Piece
-{
+class Piece {
 private:
-    Color color;
-    PieceType type;
+  Color color;
+  PieceType type;
 
 public:
-    Piece(Color color, PieceType type) : color(color), type(type) {}
+  Piece(Color color, PieceType type) : color(color), type(type) {}
 
-    Color getColor() const { return color; }
-    PieceType getType() const { return type; }
+  Color getColor() const { return color; }
+  PieceType getType() const { return type; }
 };
