@@ -60,7 +60,8 @@
         "numeric": "cpp",
         "random": "cpp",
         "string_view": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "sstream": "cpp"
     },
     "discord.enabled": true
 }

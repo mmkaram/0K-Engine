@@ -5,7 +5,7 @@
 class Chess
 {
 private:
-    Board* board;
+    Board *board;
 
 public:
     Chess()
@@ -24,5 +24,9 @@ public:
     std::string getBoard()
     {
         return board->toString();
+    }
+    getMoves()
+    {
+        return generateMoves(this->board, COLOR::WHITE);
     }
 };

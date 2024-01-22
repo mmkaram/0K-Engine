@@ -9,6 +9,7 @@ private:
     // 8x8 = 64 squares
     static const int SIZE = 8;
     Piece *board[SIZE][SIZE];
+
 public:
     // Constructor that sets all the pointers to nullptr
     // TODO: Import FEN and set the board accordingly
@@ -18,7 +19,7 @@ public:
         {
             for (int j = 0; j < SIZE; j++)
             {
-              board[i][j] = nullptr;
+                board[i][j] = nullptr;
             }
         }
         board[0][0] = new Piece(COLOR::WHITE, TYPE::KING);
@@ -111,6 +112,7 @@ public:
                         }
                     }
                 }
+                result += " ";
             }
             result += "\n";
         }

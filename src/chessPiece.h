@@ -1,3 +1,5 @@
+#include "movegen.h"
+
 enum class COLOR
 {
     WHITE,
@@ -12,7 +14,8 @@ enum class TYPE
     BISHOP,
     ROOK,
     QUEEN,
-    KING
+    KING,
+    NONE
 };
 
 class Piece
