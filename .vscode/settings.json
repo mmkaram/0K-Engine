@@ -61,7 +61,10 @@
         "random": "cpp",
         "string_view": "cpp",
         "numbers": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "bitset": "cpp",
+        "charconv": "cpp",
+        "optional": "cpp"
     },
     "discord.enabled": true
 }
