@@ -1,18 +1,17 @@
 #include <iostream>
+#include "engine.cpp"
 
-#include "chessGame.h"
+using namespace chess;
 
-int main() {
-    // Example usage
-    ChessBoard chessBoard;
+int main()
+{
+    // Board board = Board("7k/5KQ1/8/8/8/8/8/8 b - - 0 1");
+    Board board = Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-    // Set pieces on the board
-    chessBoard.setPiece(0, 0, ChessBoard::WHITE_COLOR, ChessBoard::ROOK);
-    chessBoard.setPiece(7, 7, ChessBoard::BLACK_COLOR, ChessBoard::QUEEN);
-
-    // Get and print pieces from the board
-    std::cout << "Piece at (0, 0): " << chessBoard.getPiece(0, 0) << std::endl;
-    std::cout << "Piece at (7, 7): " << chessBoard.getPiece(7, 7) << std::endl;
-
+    // std::cout << eval(board) << std::endl;
+    // Movelist moves = getMoves(board);
+    
+    std::cout << perft(board, 1) << std::endl;
+    
     return 0;
 }
