@@ -45,6 +45,23 @@
         "xutility": "cpp",
         "algorithm": "cpp",
         "string": "cpp",
-        "vector": "cpp"
-    }
+        "vector": "cpp",
+        "chess.h": "c",
+        "map": "cpp",
+        "xtree": "cpp",
+        "list": "cpp",
+        "*.tcc": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "functional": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "string_view": "cpp",
+        "numbers": "cpp",
+        "sstream": "cpp"
+    },
+    "discord.enabled": true
 }
