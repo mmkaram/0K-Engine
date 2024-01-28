@@ -93,81 +93,34 @@ uint64_t perft(Board &board, int depth)
     return nodes;
 }
 
-std::pair<Node, Move> treeGen(Board &board, int depth, bool isMaximizingPlayer)
-{
-    // init movelist
-    Movelist moves;
-    movegen::legalmoves(moves, board);
-
-    // init node, best move, and best score
-    // (works by either maximizing or minimizing centipawn evaluation)
-    Node node;
-    Move bestMove;
-    int bestScore = isMaximizingPlayer ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
-
-    // Given length of moves, iterate through each move
-    for (int i = 0; i < moves.size(); i++)
-    {
-        // given a move, make it and evaluate the board
-        // set move's score to eval
-        auto move = moves[i];
-        board.makeMove(move);
-        move.setScore(eval(board));
-
-        // if depth is one, then we're at the end of the tree
-        // TODO: make it so keeps going if there are possible captures
-        if (depth > 1)
-        {
-            auto child = treeGen(board, depth - 1, !isMaximizingPlayer);
-            node.children.push_back(child.first);
-            int childScore = child.second.score();
-
-            if (isMaximizingPlayer && childScore > bestScore)
-            {
-                bestScore = childScore;
-                bestMove = move;
-            }
-            else if (!isMaximizingPlayer && childScore < bestScore)
-            {
-                bestScore = childScore;
-                bestMove = move;
-            }
-        }
-        else
-        {
-            int score = eval(board);
-            if (isMaximizingPlayer && score > bestScore)
-            {
-                bestScore = score;
-                bestMove = move;
-            }
-            else if (!isMaximizingPlayer && score < bestScore)
-            {
-                bestScore = score;
-                bestMove = move;
-            }
-        }
-
-        board.unmakeMove(move);
-    }
-    return {node, bestMove};
-}
-
 std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer, int alpha, int beta)
 {
+    // TODO:
+    // - order moves by high value captures, pawn promotions, checks, etc.
+    // - search all captures even if the depth reaches 0
+    // - implement transposition tables
+    // - dynamic depth/iterative deepening (going through the tree once, stroing the best move
+    //  and then going through the tree again with a higher depth)
+
+    // init the movelist
     Movelist moves;
     movegen::legalmoves(moves, board);
 
+    // init a node and a bestmove to return
     Node node;
     Move bestMove;
     int bestScore = isMaximizingPlayer ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
 
+    // for every move in the movelist of the current node
     for (int i = 0; i < moves.size(); i++)
     {
+        // make the move and evaluate the board
         auto move = moves[i];
         board.makeMove(move);
         move.setScore(eval(board));
         
+        // if the depth is greater than 1, recurse
+        // if not then just evaluate the board
         if (depth > 1)
         {
             auto child = alphaBeta(board, depth - 1, !isMaximizingPlayer, alpha, beta);
