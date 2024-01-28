@@ -1,9 +1,8 @@
 #include <iostream>
 #include "lib/chess.hpp"
+#include "lib/positionValues.hpp"
 
 using namespace chess;
-
-const int DEPTH = 3;
 
 // define piece values in centipawns
 const int pawnValue = 100;
@@ -13,24 +12,11 @@ const int rookValue = 500;
 const int queenValue = 900;
 const int kingValue = 1000000000;
 
-struct Node {
+struct Node
+{
     Move move;
     std::vector<Node> children;
 };
-
-Movelist getMoves(Board board)
-{
-    Movelist moves;
-    Movelist empty;
-    movegen::legalmoves(moves, board);
-
-    if (moves.empty())
-    {
-        std::cout << "No moves found" << std::endl;
-        return empty;
-    }
-    return moves;
-}
 
 // @brief evaluate the board position
 int16_t eval(Board board)
@@ -41,40 +27,40 @@ int16_t eval(Board board)
         switch (board.at(i))
         {
         case 0:
-            score += pawnValue;
+            score += pawnValue + whitePawn[i];
             break;
         case 1:
-            score += knightValue;
+            score += knightValue + knight[i];
             break;
         case 2:
-            score += bishopValue;
+            score += bishopValue + bishop[i];
             break;
         case 3:
-            score += rookValue;
+            score += rookValue + rook[i];
             break;
         case 4:
             score += queenValue;
             break;
         case 5:
-            score += kingValue;
+            score += kingValue + whiteKing[i];
             break;
         case 6:
-            score -= pawnValue;
+            score -= pawnValue - blackPawn[i];
             break;
         case 7:
-            score -= knightValue;
+            score -= knightValue - knight[i];
             break;
         case 8:
-            score -= bishopValue;
+            score -= bishopValue - bishop[i];
             break;
         case 9:
-            score -= rookValue;
+            score -= rookValue - rook[i];
             break;
         case 10:
             score -= queenValue;
             break;
         case 11:
-            score -= kingValue;
+            score -= kingValue - blackKing[i];
             break;
         }
     }
@@ -99,7 +85,7 @@ uint64_t perft(Board &board, int depth)
         board.makeMove(move);
         move.setScore(eval(board));
         std::cout << "analyzed move: " << move << " and assinged score: " << eval(board) << std::endl;
-        
+
         nodes += perft(board, depth - 1);
         board.unmakeMove(move);
     }
@@ -107,13 +93,74 @@ uint64_t perft(Board &board, int depth)
     return nodes;
 }
 
+std::pair<Node, Move> treeGen(Board &board, int depth, bool isMaximizingPlayer)
+{
+    // init movelist
+    Movelist moves;
+    movegen::legalmoves(moves, board);
 
-Node treeGen(Board &board, int depth)
+    // init node, best move, and best score
+    // (works by either maximizing or minimizing centipawn evaluation)
+    Node node;
+    Move bestMove;
+    int bestScore = isMaximizingPlayer ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
+
+    // Given length of moves, iterate through each move
+    for (int i = 0; i < moves.size(); i++)
+    {
+        // given a move, make it and evaluate the board
+        // set move's score to eval
+        auto move = moves[i];
+        board.makeMove(move);
+        move.setScore(eval(board));
+
+        // if depth is one, then we're at the end of the tree
+        // TODO: make it so keeps going if there are possible captures
+        if (depth > 1)
+        {
+            auto child = treeGen(board, depth - 1, !isMaximizingPlayer);
+            node.children.push_back(child.first);
+            int childScore = child.second.score();
+
+            if (isMaximizingPlayer && childScore > bestScore)
+            {
+                bestScore = childScore;
+                bestMove = move;
+            }
+            else if (!isMaximizingPlayer && childScore < bestScore)
+            {
+                bestScore = childScore;
+                bestMove = move;
+            }
+        }
+        else
+        {
+            int score = eval(board);
+            if (isMaximizingPlayer && score > bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+            }
+            else if (!isMaximizingPlayer && score < bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+
+        board.unmakeMove(move);
+    }
+    return {node, bestMove};
+}
+
+std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer, int alpha, int beta)
 {
     Movelist moves;
     movegen::legalmoves(moves, board);
 
     Node node;
+    Move bestMove;
+    int bestScore = isMaximizingPlayer ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
 
     for (int i = 0; i < moves.size(); i++)
     {
@@ -123,29 +170,53 @@ Node treeGen(Board &board, int depth)
         
         if (depth > 1)
         {
-            node.children.push_back(treeGen(board, depth - 1));
+            auto child = alphaBeta(board, depth - 1, !isMaximizingPlayer, alpha, beta);
+            node.children.push_back(child.first);
+            int childScore = child.second.score();
+
+            if (isMaximizingPlayer)
+            {
+                if (childScore > bestScore)
+                {
+                    bestScore = childScore;
+                    bestMove = move;
+                }
+                alpha = std::max(alpha, bestScore);
+            }
+            else
+            {
+                if (childScore < bestScore)
+                {
+                    bestScore = childScore;
+                    bestMove = move;
+                }
+                beta = std::min(beta, bestScore);
+            }
         }
-        
-        board.unmakeMove(move);
-    }
-
-    return node;
-}
-
-Move treeTraverse(Node node)
-{
-    Move bestMove;
-    int bestScore = 0;
-
-    for (int i = 0; i < node.children.size(); i++)
-    {
-        auto child = node.children[i];
-        if (child.move.score() > bestScore)
+        else
         {
-            bestScore = child.move.score();
-            bestMove = child.move;
+            int score = eval(board);
+            if (isMaximizingPlayer && score > bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+                alpha = std::max(alpha, bestScore);
+            }
+            else if (!isMaximizingPlayer && score < bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+                beta = std::min(beta, bestScore);
+            }
+        }
+
+        board.unmakeMove(move);
+
+        // Alpha Beta Pruning
+        if (beta <= alpha)
+        {
+            break;
         }
     }
-
-    return bestMove;
+    return {node, bestMove};
 }

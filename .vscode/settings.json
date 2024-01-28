@@ -64,7 +64,9 @@
         "sstream": "cpp",
         "bitset": "cpp",
         "charconv": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     },
     "discord.enabled": true
 }
