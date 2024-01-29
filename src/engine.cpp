@@ -19,6 +19,7 @@ struct Node
 };
 
 // @brief evaluate the board position
+// TODO: Implement NNUE
 int16_t eval(Board board)
 {
     int score = 0;
@@ -69,6 +70,7 @@ int16_t eval(Board board)
 
 uint64_t perft(Board &board, int depth)
 {
+    // taken from the chess-engine docs
     Movelist moves;
     movegen::legalmoves(moves, board);
 
@@ -101,6 +103,7 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
     // - implement transposition tables
     // - dynamic depth/iterative deepening (going through the tree once, stroing the best move
     //  and then going through the tree again with a higher depth)
+    // - Multithreading
 
     // init the movelist
     Movelist moves;

@@ -38,13 +38,13 @@ int main(int argc, char *argv[])
         std::cout << "best move: " << tree.second << std::endl;
         std::cout << "score: " << tree.second.score() << std::endl;
         std::cout << stdGame.getFen() << std::endl;
-        std::cout << "-----------------------" << std::endl;
 
         // cound how many seconds it took to run
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         double seconds = duration.count() / 1e6; // convert microseconds to seconds
         std::cout << "Time to execute: " << seconds << " seconds" << std::endl;
+        std::cout << "-----------------------" << std::endl;
 
         // player moves
         std::cout << "Enter move: ";
