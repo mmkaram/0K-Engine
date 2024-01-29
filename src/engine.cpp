@@ -118,10 +118,30 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
         auto move = moves[i];
         board.makeMove(move);
         move.setScore(eval(board));
-        
+
         // if the depth is greater than 1, recurse
         // if not then just evaluate the board
-        if (depth > 1)
+        Bitboard att = attacks::attackers(board, isMaximizingPlayer, move.to());
+        
+        // if the depth has reached the end,
+        // evaluate the board and set the score
+
+        if (depth <= 1) 
+        {
+            int score = eval(board);
+            if (isMaximizingPlayer && score > bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+                alpha = std::max(alpha, bestScore);
+            }
+            else if (!isMaximizingPlayer && score < bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+                beta = std::min(beta, bestScore);
+            }
+        }else
         {
             auto child = alphaBeta(board, depth - 1, !isMaximizingPlayer, alpha, beta);
             node.children.push_back(child.first);
@@ -143,22 +163,6 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
                     bestScore = childScore;
                     bestMove = move;
                 }
-                beta = std::min(beta, bestScore);
-            }
-        }
-        else
-        {
-            int score = eval(board);
-            if (isMaximizingPlayer && score > bestScore)
-            {
-                bestScore = score;
-                bestMove = move;
-                alpha = std::max(alpha, bestScore);
-            }
-            else if (!isMaximizingPlayer && score < bestScore)
-            {
-                bestScore = score;
-                bestMove = move;
                 beta = std::min(beta, bestScore);
             }
         }
