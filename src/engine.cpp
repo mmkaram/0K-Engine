@@ -95,6 +95,31 @@ uint64_t perft(Board &board, int depth)
     return nodes;
 }
 
+int qsearch(Board &board, int alpha, int beta)
+{
+    int stand_pat = eval(board);
+    if( stand_pat >= beta )
+        return beta;
+    if( alpha < stand_pat )
+        alpha = stand_pat;
+
+    Movelist captures;
+    movegen::legalmoves<movegen::MoveGenType::CAPTURE>(captures, board);
+
+    for (auto move : captures)
+    {
+        board.makeMove(move);
+        int score = -qsearch(board, -beta, -alpha);
+        board.unmakeMove(move);
+
+        if( score >= beta )
+            return beta;
+        if( score > alpha )
+           alpha = score;
+    }
+    return alpha;
+}
+
 std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer, int alpha, int beta)
 {
     // TODO:
@@ -125,13 +150,13 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
         // if the depth is greater than 1, recurse
         // if not then just evaluate the board
         Bitboard att = attacks::attackers(board, isMaximizingPlayer, move.to());
-        
+
         // if the depth has reached the end,
         // evaluate the board and set the score
 
-        if (depth <= 1) 
+        if (depth <= 1)
         {
-            int score = eval(board);
+            int score = qsearch(board, alpha, beta);
             if (isMaximizingPlayer && score > bestScore)
             {
                 bestScore = score;
@@ -144,7 +169,8 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
                 bestMove = move;
                 beta = std::min(beta, bestScore);
             }
-        }else
+        }
+        else
         {
             auto child = alphaBeta(board, depth - 1, !isMaximizingPlayer, alpha, beta);
             node.children.push_back(child.first);

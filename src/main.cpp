@@ -4,7 +4,7 @@
 
 using namespace chess;
 
-int const DEPTH = 6;
+int const DEPTH = 5;
 
 int main(int argc, char *argv[])
 {
