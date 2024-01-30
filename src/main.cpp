@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         stdGame = Board(fen);
     }
 
-    while (true)
+    while (stdGame.isGameOver().first == GameResultReason::NONE)
     {
         // bot moves
         auto start = std::chrono::high_resolution_clock::now();
@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
         std::cout << "Enter move: ";
         std::string move;
         std::cin >> move;
+        if (move.empty() || move == "exit" || move == "q" || move == "quit") break;
         // take move string and make it a UCI move
         // also called a "move object"
         Move moveObj = uci::uciToMove(stdGame, move);
