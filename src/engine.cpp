@@ -20,52 +20,58 @@ struct Node
 
 // @brief evaluate the board position
 // TODO: Implement NNUE
-int16_t eval(Board board)
+int eval(Board board)
 {
-    int score = 0;
-    for (int i = 0; i < 64; i++)
+    int eval = 0;
+
+    auto occ = board.occ();
+
+    while (occ)
     {
-        switch (board.at(i))
+        const auto pos = occ.pop();
+        const auto piece = board.at(pos);
+
+        switch (piece)
         {
         case 0:
-            score += pawnValue + whitePawn[i];
+            eval += pawnValue + whitePawn[pos];
             break;
         case 1:
-            score += knightValue + knight[i];
+            eval += knightValue + knight[pos];
             break;
         case 2:
-            score += bishopValue + bishop[i];
+            eval += bishopValue + bishop[pos];
             break;
         case 3:
-            score += rookValue + rook[i];
+            eval += rookValue + rook[pos];
             break;
         case 4:
-            score += queenValue;
+            eval += queenValue;
             break;
         case 5:
-            score += kingValue + whiteKing[i];
+            eval += kingValue + whiteKing[pos];
             break;
         case 6:
-            score -= pawnValue - blackPawn[i];
+            eval -= pawnValue - blackPawn[pos];
             break;
         case 7:
-            score -= knightValue - knight[i];
+            eval -= knightValue - knight[pos];
             break;
         case 8:
-            score -= bishopValue - bishop[i];
+            eval -= bishopValue - bishop[pos];
             break;
         case 9:
-            score -= rookValue - rook[i];
+            eval -= rookValue - rook[pos];
             break;
         case 10:
-            score -= queenValue;
+            eval -= queenValue;
             break;
         case 11:
-            score -= kingValue - blackKing[i];
+            eval -= kingValue - blackKing[pos];
             break;
         }
     }
-    return score;
+    return eval;
 }
 
 uint64_t perft(Board &board, int depth)
@@ -85,8 +91,7 @@ uint64_t perft(Board &board, int depth)
     {
         auto move = moves[i];
         board.makeMove(move);
-        move.setScore(eval(board));
-        std::cout << "analyzed move: " << move << " and assinged score: " << eval(board) << std::endl;
+        // move.setScore(eval(board));
 
         nodes += perft(board, depth - 1);
         board.unmakeMove(move);
@@ -98,9 +103,9 @@ uint64_t perft(Board &board, int depth)
 int qsearch(Board &board, int alpha, int beta)
 {
     int stand_pat = eval(board);
-    if( stand_pat >= beta )
+    if (stand_pat >= beta)
         return beta;
-    if( alpha < stand_pat )
+    if (alpha < stand_pat)
         alpha = stand_pat;
 
     Movelist captures;
@@ -112,34 +117,33 @@ int qsearch(Board &board, int alpha, int beta)
         int score = -qsearch(board, -beta, -alpha);
         board.unmakeMove(move);
 
-        if( score >= beta )
+        if (score >= beta)
             return beta;
-        if( score > alpha )
-           alpha = score;
+        if (score > alpha)
+            alpha = score;
     }
     return alpha;
 }
 
-std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer, int alpha, int beta)
+Move alphaBetaTwo(Board &board, int depth, bool isMaximizingPlayer, int alpha, int beta)
 {
     // TODO:
-    // - order moves by high value captures, pawn promotions, checks, etc.
+    // - implement negamax
     // - search all captures even if the depth reaches 0
+    // - order moves by high value captures, pawn promotions, checks, etc.
     // - implement transposition tables
     // - dynamic depth/iterative deepening (going through the tree once, stroing the best move
     //  and then going through the tree again with a higher depth)
     // - Multithreading
-
-    // init the movelist
+    
+    // init movelist
     Movelist moves;
     movegen::legalmoves(moves, board);
 
-    // init a node and a bestmove to return
-    Node node;
     Move bestMove;
     int bestScore = isMaximizingPlayer ? -std::numeric_limits<int>::max() : std::numeric_limits<int>::max();
 
-    // for every move in the movelist of the current node
+    // for each move in the movelist
     for (int i = 0; i < moves.size(); i++)
     {
         // make the move and evaluate the board
@@ -147,14 +151,30 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
         board.makeMove(move);
         move.setScore(eval(board));
 
-        // if the depth is greater than 1, recurse
-        // if not then just evaluate the board
-        Bitboard att = attacks::attackers(board, isMaximizingPlayer, move.to());
+        // if the depth is greater than 1, call alphaBetaTwo recursively
+        if (depth > 1)
+        {
+            // call alphaBetaTwo recursively
+            Move childMove = alphaBetaTwo(board, depth - 1, !isMaximizingPlayer, alpha, beta);
+            int childScore = childMove.score();
 
-        // if the depth has reached the end,
-        // evaluate the board and set the score
-
-        if (depth <= 1)
+            // if the child score is better than the best score
+            // update the best score and best move
+            if (isMaximizingPlayer && childScore > bestScore)
+            {
+                bestScore = childScore;
+                bestMove = move;
+                alpha = std::max(alpha, bestScore);
+            }
+            else if (!isMaximizingPlayer && childScore < bestScore)
+            {
+                bestScore = childScore;
+                bestMove = move;
+                beta = std::min(beta, bestScore);
+            }
+        }
+        // if the depth is 0, call qsearch
+        else
         {
             int score = qsearch(board, alpha, beta);
             if (isMaximizingPlayer && score > bestScore)
@@ -170,39 +190,14 @@ std::pair<Node, Move> alphaBeta(Board &board, int depth, bool isMaximizingPlayer
                 beta = std::min(beta, bestScore);
             }
         }
-        else
-        {
-            auto child = alphaBeta(board, depth - 1, !isMaximizingPlayer, alpha, beta);
-            node.children.push_back(child.first);
-            int childScore = child.second.score();
-
-            if (isMaximizingPlayer)
-            {
-                if (childScore > bestScore)
-                {
-                    bestScore = childScore;
-                    bestMove = move;
-                }
-                alpha = std::max(alpha, bestScore);
-            }
-            else
-            {
-                if (childScore < bestScore)
-                {
-                    bestScore = childScore;
-                    bestMove = move;
-                }
-                beta = std::min(beta, bestScore);
-            }
-        }
 
         board.unmakeMove(move);
 
-        // Alpha Beta Pruning
         if (beta <= alpha)
         {
             break;
         }
     }
-    return {node, bestMove};
+
+    return bestMove;
 }

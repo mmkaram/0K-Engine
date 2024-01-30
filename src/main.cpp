@@ -4,7 +4,7 @@
 
 using namespace chess;
 
-int const DEPTH = 5;
+int const DEPTH = 6;
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
         stdGame = Board(fen);
     }
 
+    
+    std::cout << perft(stdGame, DEPTH) << std::endl;
+
     while (true)
     {
         // bot moves
@@ -31,12 +34,12 @@ int main(int argc, char *argv[])
         // set up the alpha and beta values for the first call to alphaBeta
         int alpha = std::numeric_limits<int>::lowest();
         int beta = std::numeric_limits<int>::max();
-        std::pair<Node, Move> tree = alphaBeta(stdGame, DEPTH,
+        Move move = alphaBetaTwo(stdGame, DEPTH,
                                                true, alpha, beta);
-        stdGame.makeMove(tree.second);
+        stdGame.makeMove(move);
         std::cout << "-----------------------" << std::endl;
-        std::cout << "best move: " << tree.second << std::endl;
-        std::cout << "score: " << tree.second.score() << std::endl;
+        std::cout << "best move: " << move << std::endl;
+        std::cout << "score: " << move.score() << std::endl;
         std::cout << stdGame.getFen() << std::endl;
 
         // cound how many seconds it took to run
@@ -48,11 +51,11 @@ int main(int argc, char *argv[])
 
         // player moves
         std::cout << "Enter move: ";
-        std::string move;
-        std::cin >> move;
+        std::string moveStr;
+        std::cin >> moveStr;
         // take move string and make it a UCI move
         // also called a "move object"
-        Move moveObj = uci::uciToMove(stdGame, move);
+        Move moveObj = uci::uciToMove(stdGame, moveStr);
         stdGame.makeMove(moveObj);
     }
     return 0;
